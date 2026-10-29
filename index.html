@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2f43d0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Amix Gastos">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<title>Amix Gastos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap">
+<style>
+html{-webkit-text-size-adjust:100%}
+:root{padding-top:env(safe-area-inset-top,0px)}
+body{margin:0}
+[hidden]{display:none!important}
+/* Layout: app de una columna para celular, pestañas abajo; débito y crédito con color propio */
+:root{
+  --bg:#f3f4f8; --surface:#ffffff; --fg:#151a2d; --muted:#5f667d; --line:#dfe2ec;
+  --accent:#2f43d0; --accent-ink:#ffffff;
+  --deb:#0f7a5c; --deb-soft:#dff3ec; --cre:#b0560c; --cre-soft:#fbeadb;
+  --danger:#b4232f;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"Figtree", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1120; --surface:#181c2f; --fg:#eceef6; --muted:#9aa1b8; --line:#2a2f47;
+  --accent:#7d8dff; --accent-ink:#0e1120;
+  --deb:#4fd1a5; --deb-soft:#163a31; --cre:#f2a25c; --cre-soft:#3d2a17; --danger:#ff7b85; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1120; --surface:#181c2f; --fg:#eceef6; --muted:#9aa1b8; --line:#2a2f47;
+  --accent:#7d8dff; --accent-ink:#0e1120;
+  --deb:#4fd1a5; --deb-soft:#163a31; --cre:#f2a25c; --cre-soft:#3d2a17; --danger:#ff7b85; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45}
+.wrap{max-width:520px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px calc(96px + env(safe-area-inset-bottom,0px))}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:18px}
+h1{font-family:var(--display);font-weight:700;font-size:1.6rem;margin:0;letter-spacing:-.01em}
+h2{font-family:var(--display);font-weight:600;font-size:1.15rem;margin:0}
+.today{color:var(--muted);font-size:.9rem;text-transform:capitalize}
+.num{font-variant-numeric:tabular-nums}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:16px}
+.stack{display:grid;gap:16px}
+label,.lbl{font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.field{display:grid;gap:6px}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 1rem var(--body);padding:10px;border-radius:9px;cursor:pointer}
+.seg button[aria-pressed="true"][data-t="debito"]{background:var(--deb-soft);color:var(--deb)}
+.seg button[aria-pressed="true"][data-t="credito"]{background:var(--cre-soft);color:var(--cre)}
+select,input{width:100%;font:500 1rem var(--body);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-width:0}
+.money{position:relative}
+.money span{position:absolute;left:14px;top:50%;transform:translateY(-50%);font:700 1.6rem var(--display);color:var(--muted)}
+.money input{font:700 1.9rem var(--display);padding-left:38px;font-variant-numeric:tabular-nums}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn{border:0;border-radius:12px;padding:14px 18px;font:600 1rem var(--body);cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
+.btn.small{padding:8px 12px;font-size:.9rem}
+.datebox{display:flex;justify-content:space-between;gap:8px;font-size:.92rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:12px}
+.datebox strong{color:var(--fg);font-weight:600;text-transform:capitalize}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:600;font-size:.95rem;z-index:30}
+.cards{display:grid;gap:8px}
+.card-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px}
+.card-row .name{flex:1;min-width:0;overflow-wrap:anywhere}
+.chip{font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:999px}
+.chip.debito{background:var(--deb-soft);color:var(--deb)} .chip.credito{background:var(--cre-soft);color:var(--cre)}
+.x{border:0;background:transparent;color:var(--muted);font-size:.9rem;cursor:pointer;padding:6px 8px;border-radius:8px}
+.x.confirm{color:var(--danger);font-weight:600}
+.addcard{display:grid;grid-template-columns:1fr auto;gap:8px}
+.addcard .seg{grid-column:1/-1}
+.month{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.month h2{text-transform:capitalize;text-align:center;flex:1}
+.month button{width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font-size:1.2rem;cursor:pointer}
+.list{display:grid}
+.day{font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:14px 2px 6px}
+.item{display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center;padding:10px 2px;border-bottom:1px solid var(--line)}
+.item .c{font-weight:600;min-width:0;overflow-wrap:anywhere}
+.item .t{font-size:.85rem;color:var(--muted);grid-column:1}
+.item .m{font-weight:600;grid-row:1;grid-column:2;text-align:right}
+.item .x{grid-column:2;justify-self:end;padding:2px 4px;font-size:.8rem}
+.subs{display:grid;gap:6px;font-size:.92rem}
+.subs div{display:flex;justify-content:space-between;gap:12px}
+.subs span:first-child{color:var(--muted);min-width:0;overflow-wrap:anywhere}
+.total{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:16px 18px;border-radius:14px}
+.total.debito{background:var(--deb-soft);color:var(--deb)} .total.credito{background:var(--cre-soft);color:var(--cre)}
+.total .v{font:700 1.7rem var(--display)}
+.backup{display:flex;flex-wrap:wrap;gap:8px}
+.backup label.btn{text-transform:none;letter-spacing:0;font-size:.9rem;color:var(--accent)}
+.empty{color:var(--muted);text-align:center;padding:28px 8px}
+.notice{font-size:.85rem;color:var(--muted);text-align:center}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px));z-index:20}
+nav button{border:0;background:transparent;color:var(--muted);font:600 .82rem var(--body);padding:8px 4px;display:grid;justify-items:center;gap:3px;cursor:pointer;border-radius:10px}
+nav button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+nav button[aria-current="page"]{color:var(--accent)}
+@media (prefers-reduced-motion:no-preference){.toast{animation:pop .2s ease-out}@keyframes pop{from{opacity:0;transform:translate(-50%,8px)}}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header><h1>Amix Gastos</h1><span class="today" id="today"></span></header>
+
+  <!-- REGISTRAR -->
+  <section id="v-reg" class="stack">
+    <form class="panel" id="f-gasto" autocomplete="off">
+      <div class="field"><span class="lbl">Tipo de tarjeta</span>
+        <div class="seg" id="seg-reg"><button type="button" data-t="debito" aria-pressed="true">Débito</button><button type="button" data-t="credito" aria-pressed="false">Crédito</button></div>
+      </div>
+      <div class="field"><label for="sel-card">Tarjeta</label><select id="sel-card"></select></div>
+      <div class="field"><label for="in-monto">Monto de la compra</label>
+        <div class="money"><span>$</span><input id="in-monto" inputmode="numeric" placeholder="0" aria-describedby="hint"></div>
+      </div>
+      <div class="field"><label for="in-nota">Descripción (opcional)</label><input id="in-nota" maxlength="60" placeholder="Ej. mercado, gasolina"></div>
+      <div class="datebox"><span>Fecha y hora</span><strong id="now" class="num"></strong></div>
+      <button class="btn" id="b-save" type="submit">Guardar gasto</button>
+      <p class="notice" id="hint" hidden></p>
+    </form>
+  </section>
+
+  <!-- GASTOS DEL MES -->
+  <section id="v-mes" class="stack" hidden>
+    <div class="seg" id="seg-mes"><button type="button" data-t="debito" aria-pressed="true">Débito</button><button type="button" data-t="credito" aria-pressed="false">Crédito</button></div>
+    <div class="month"><button type="button" id="m-prev" aria-label="Mes anterior">‹</button><h2 id="m-label"></h2><button type="button" id="m-next" aria-label="Mes siguiente">›</button></div>
+    <div class="panel">
+      <div class="list" id="list"></div>
+      <div class="subs num" id="subs"></div>
+      <div class="total" id="total"><span>Total del mes</span><span class="v num" id="total-v"></span></div>
+    </div>
+  </section>
+
+  <!-- TARJETAS -->
+  <section id="v-tar" class="stack" hidden>
+    <form class="panel" id="f-card" autocomplete="off">
+      <h2>Agregar tarjeta</h2>
+      <div class="addcard">
+        <div class="seg" id="seg-card"><button type="button" data-t="debito" aria-pressed="true">Débito</button><button type="button" data-t="credito" aria-pressed="false">Crédito</button></div>
+        <input id="in-card" maxlength="40" placeholder="Ej. Bancolombia Visa 4417" aria-label="Nombre de la tarjeta">
+        <button class="btn" type="submit">Agregar</button>
+      </div>
+    </form>
+    <div class="panel"><h2>Mis tarjetas</h2><div class="cards" id="cards"></div></div>
+    <div class="panel"><h2>Respaldo</h2>
+      <p class="notice" id="store-note" style="text-align:left;margin:0"></p>
+      <div class="backup">
+        <button type="button" class="btn ghost small" id="b-csv">Exportar a Excel (CSV)</button>
+        <button type="button" class="btn ghost small" id="b-json">Guardar respaldo</button>
+        <label class="btn ghost small" for="in-import">Restaurar respaldo</label>
+        <input type="file" id="in-import" accept=".json,application/json" hidden>
+      </div>
+    </div>
+  </section>
+</div>
+
+<nav aria-label="Secciones">
+  <button type="button" data-v="reg" aria-current="page"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Registrar</button>
+  <button type="button" data-v="mes"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>Gastos del mes</button>
+  <button type="button" data-v="tar"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg>Tarjetas</button>
+</nav>
+
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const fmt=new Intl.NumberFormat("es-CO",{style:"currency",currency:"COP",maximumFractionDigits:0});
+const fDate=new Intl.DateTimeFormat("es-CO",{weekday:"long",day:"numeric",month:"short",year:"numeric"});
+const fFull=new Intl.DateTimeFormat("es-CO",{day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"});
+const fTime=new Intl.DateTimeFormat("es-CO",{hour:"numeric",minute:"2-digit"});
+const fDay=new Intl.DateTimeFormat("es-CO",{weekday:"long",day:"numeric"});
+const fMonth=new Intl.DateTimeFormat("es-CO",{month:"long",year:"numeric"});
+const pad=n=>String(n).padStart(2,"0");
+const mkey=d=>d.getFullYear()+"-"+pad(d.getMonth()+1);
+
+let state={cards:[],gastos:[],regTipo:"debito",mesTipo:"debito",cardTipo:"debito",mes:new Date()};
+let store=null; // {saveCards, addGasto, delGasto}
+
+/* ---- almacenamiento: db privada por persona; si no hay, este navegador ---- */
+const LS="amix-gastos-v1";
+function lsLoad(){try{const d=JSON.parse(localStorage.getItem(LS)||"{}");state.cards=d.cards||[];state.gastos=d.gastos||[];}catch(e){}}
+function lsSave(){try{localStorage.setItem(LS,JSON.stringify({cards:state.cards,gastos:state.gastos}));}catch(e){}}
+const localStore={
+  async saveCards(){lsSave();},
+  async addGasto(g){g.id="g"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);state.gastos.push(g);lsSave();render();},
+  async delGasto(id){state.gastos=state.gastos.filter(g=>g.id!==id);lsSave();render();}
+};
+
+function initStore(){
+  lsLoad();store=localStore;
+  try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist();}catch(e){}
+  $("#store-note").textContent="Tus datos se guardan solo en este dispositivo. Haz un respaldo de vez en cuando.";
+  render();
+}
+
+/* ---- respaldo: exportar CSV / JSON e importar JSON ---- */
+function bajar(nombre,contenido,tipo){
+  const blob=new Blob([contenido],{type:tipo});
+  const file=new File([blob],nombre,{type:tipo});
+  if(navigator.canShare&&navigator.canShare({files:[file]})){navigator.share({files:[file],title:nombre}).catch(()=>{});return;}
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=nombre;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1000);
+}
+const hoy=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());};
+function exportCSV(){
+  const name=id=>(state.cards.find(c=>c.id===id)||{}).nombre;
+  const q=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+  const rows=[["Fecha","Hora","Tipo","Tarjeta","Monto","Descripción"]];
+  [...state.gastos].sort((a,b)=>a.fecha<b.fecha?-1:1).forEach(g=>{const d=new Date(g.fecha);
+    rows.push([d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate()),pad(d.getHours())+":"+pad(d.getMinutes()),g.tipo==="debito"?"Débito":"Crédito",name(g.cardId)||g.cardNombre||"",g.monto,g.nota||""]);});
+  bajar("amix-gastos-"+hoy()+".csv","﻿"+rows.map(r=>r.map(q).join(";")).join("\r\n"),"text/csv");
+}
+function exportJSON(){bajar("amix-gastos-respaldo-"+hoy()+".json",JSON.stringify({app:"amix-gastos",version:1,cards:state.cards,gastos:state.gastos},null,1),"application/json");}
+function importJSON(file){
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const d=JSON.parse(r.result);if(!Array.isArray(d.cards)||!Array.isArray(d.gastos))throw 0;
+    const ids=new Set(state.gastos.map(g=>g.id)),cids=new Set(state.cards.map(c=>c.id));
+    const nc=d.cards.filter(c=>c&&c.id&&!cids.has(c.id)),ng=d.gastos.filter(g=>g&&g.id&&!ids.has(g.id)&&typeof g.monto==="number");
+    state.cards=[...state.cards,...nc];state.gastos=[...state.gastos,...ng];lsSave();render();
+    toast("Importado: "+nc.length+" tarjetas, "+ng.length+" gastos");
+  }catch(e){toast("Ese archivo no es un respaldo de Amix Gastos");}};
+  r.readAsText(file);
+}
+
+/* ---- utilidades UI ---- */
+function toast(t){const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),1800);}
+function bindSeg(id,key,cb){const seg=$(id);seg.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;state[key]=b.dataset.t;seg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));cb&&cb();});}
+function confirmBtn(btn,label,action){btn.addEventListener("click",()=>{if(btn.classList.contains("confirm")){action();return;}btn.classList.add("confirm");btn.textContent="¿Eliminar?";setTimeout(()=>{btn.classList.remove("confirm");btn.textContent=label;},3000);});}
+const parseMonto=v=>Number(String(v).replace(/\D/g,""))||0;
+
+/* ---- render ---- */
+function renderReg(){
+  const sel=$("#sel-card"),prev=sel.value;
+  const cs=state.cards.filter(c=>c.tipo===state.regTipo);
+  sel.replaceChildren();
+  if(!cs.length){const o=new Option("No tienes tarjetas de "+(state.regTipo==="debito"?"débito":"crédito"),"");sel.add(o);sel.disabled=true;}
+  else{sel.disabled=false;cs.forEach(c=>sel.add(new Option(c.nombre,c.id)));if(cs.some(c=>c.id===prev))sel.value=prev;}
+  const hint=$("#hint");
+  hint.hidden=!!cs.length; hint.textContent="Agrega una tarjeta en la pestaña Tarjetas para empezar.";
+  $("#b-save").disabled=!cs.length||!parseMonto($("#in-monto").value);
+}
+function renderMes(){
+  const key=mkey(state.mes), tipo=state.mesTipo;
+  $("#m-label").textContent=fMonth.format(state.mes);
+  $("#m-next").disabled=key>=mkey(new Date());
+  const name=id=>(state.cards.find(c=>c.id===id)||{}).nombre;
+  const rows=state.gastos.filter(g=>g.tipo===tipo&&g.mes===key).sort((a,b)=>a.fecha<b.fecha?-1:1);
+  const list=$("#list");list.replaceChildren();
+  if(!rows.length){const p=document.createElement("p");p.className="empty";p.textContent="Sin gastos con tarjeta "+(tipo==="debito"?"débito":"crédito")+" en este mes.";list.appendChild(p);}
+  let lastDay="",total=0;const byCard={};
+  rows.forEach(g=>{
+    const d=new Date(g.fecha),dk=d.toDateString();
+    if(dk!==lastDay){lastDay=dk;const h=document.createElement("div");h.className="day";h.textContent=fDay.format(d);list.appendChild(h);}
+    const it=document.createElement("div");it.className="item";
+    const c=document.createElement("div");c.className="c";c.textContent=name(g.cardId)||g.cardNombre||"Tarjeta";
+    const m=document.createElement("div");m.className="m num";m.textContent=fmt.format(g.monto);
+    const t=document.createElement("div");t.className="t num";t.textContent=fTime.format(d)+(g.nota?" · "+g.nota:"");
+    const x=document.createElement("button");x.type="button";x.className="x";x.textContent="Eliminar";
+    confirmBtn(x,"Eliminar",()=>store.delGasto(g.id).then(()=>toast("Gasto eliminado")).catch(()=>toast("No se pudo eliminar")));
+    it.append(c,m,t,x);list.appendChild(it);
+    total+=g.monto;const n=c.textContent;byCard[n]=(byCard[n]||0)+g.monto;
+  });
+  const subs=$("#subs");subs.replaceChildren();
+  const names=Object.keys(byCard);
+  if(names.length>1)names.forEach(n=>{const r=document.createElement("div");const a=document.createElement("span");a.textContent=n;const b=document.createElement("span");b.textContent=fmt.format(byCard[n]);r.append(a,b);subs.appendChild(r);});
+  subs.hidden=names.length<2;
+  const tot=$("#total");tot.className="total "+tipo;
+  tot.firstElementChild.textContent="Total "+(tipo==="debito"?"débito":"crédito")+" · "+rows.length+(rows.length===1?" compra":" compras");
+  $("#total-v").textContent=fmt.format(total);
+}
+function renderCards(){
+  const box=$("#cards");box.replaceChildren();
+  if(!state.cards.length){const p=document.createElement("p");p.className="empty";p.textContent="Aún no tienes tarjetas. Agrega la primera arriba.";box.appendChild(p);return;}
+  [...state.cards].sort((a,b)=>a.tipo.localeCompare(b.tipo)||a.nombre.localeCompare(b.nombre)).forEach(c=>{
+    const r=document.createElement("div");r.className="card-row";
+    const ch=document.createElement("span");ch.className="chip "+c.tipo;ch.textContent=c.tipo==="debito"?"Débito":"Crédito";
+    const n=document.createElement("span");n.className="name";n.textContent=c.nombre;
+    const x=document.createElement("button");x.type="button";x.className="x";x.textContent="Quitar";
+    confirmBtn(x,"Quitar",async()=>{state.cards=state.cards.filter(k=>k.id!==c.id);render();try{await store.saveCards();toast("Tarjeta quitada");}catch(e){toast("No se pudo guardar");}});
+    r.append(ch,n,x);box.appendChild(r);
+  });
+}
+function render(){renderReg();renderMes();renderCards();}
+
+/* ---- eventos ---- */
+function tick(){const d=new Date();$("#now").textContent=fFull.format(d);$("#today").textContent=fDate.format(d);}
+tick();setInterval(tick,20000);
+
+bindSeg("#seg-reg","regTipo",renderReg);
+bindSeg("#seg-mes","mesTipo",renderMes);
+bindSeg("#seg-card","cardTipo");
+
+$("#in-monto").addEventListener("input",e=>{const n=parseMonto(e.target.value);e.target.value=n?n.toLocaleString("es-CO"):"";renderReg();});
+
+$("#f-gasto").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const monto=parseMonto($("#in-monto").value),cardId=$("#sel-card").value;
+  if(!monto||!cardId||!store)return;
+  const d=new Date(),card=state.cards.find(c=>c.id===cardId);
+  const g={tipo:state.regTipo,cardId,cardNombre:card?card.nombre:"",monto,nota:$("#in-nota").value.trim(),fecha:d.toISOString(),mes:mkey(d)};
+  $("#b-save").disabled=true;
+  try{await store.addGasto(g);$("#in-monto").value="";$("#in-nota").value="";toast("Gasto guardado: "+fmt.format(monto));}
+  catch(err){toast(err&&err.code==="quota_exceeded"?"Se llenó el almacenamiento":"No se pudo guardar. Intenta de nuevo.");}
+  renderReg();
+});
+
+$("#f-card").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const nombre=$("#in-card").value.trim();if(!nombre||!store)return;
+  state.cards=[...state.cards,{id:"c"+Date.now().toString(36),nombre,tipo:state.cardTipo}];
+  $("#in-card").value="";render();
+  try{await store.saveCards();toast("Tarjeta agregada");}catch(err){toast("No se pudo guardar la tarjeta");}
+});
+
+$("#m-prev").addEventListener("click",()=>{state.mes=new Date(state.mes.getFullYear(),state.mes.getMonth()-1,1);renderMes();});
+$("#m-next").addEventListener("click",()=>{state.mes=new Date(state.mes.getFullYear(),state.mes.getMonth()+1,1);renderMes();});
+
+document.querySelector("nav").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  document.querySelectorAll("nav button").forEach(x=>x.removeAttribute("aria-current"));
+  b.setAttribute("aria-current","page");
+  ["reg","mes","tar"].forEach(v=>$("#v-"+v).hidden=v!==b.dataset.v);
+  if(b.dataset.v==="mes")renderMes();
+  window.scrollTo(0,0);
+});
+
+$("#b-csv").addEventListener("click",exportCSV);
+$("#b-json").addEventListener("click",exportJSON);
+$("#in-import").addEventListener("change",e=>{const f=e.target.files[0];if(f)importJSON(f);e.target.value="";});
+
+initStore();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
+})();
+</script>
+
+</body>
+</html>
