@@ -3,48 +3,62 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#2f43d0">
+  <meta name="theme-color" content="#13241c">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Amix Gastos">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Amix">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon-192.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <title>Amix Gastos</title>
+  <title>Amix Gastos y Deudas</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&family=Manrope:wght@400;500;600;700;800&display=swap">
   <style>
     html{-webkit-text-size-adjust:100%}
-    :root{padding-top:env(safe-area-inset-top,0px)}
+    :root{padding-top:env(safe-area-inset-top,0px);background:var(--bar)}
     body{margin:0}
     [hidden]{display:none!important}
-    /* Layout: app de una columna para celular, pestañas abajo; débito y crédito con color propio */
+    /* Layout: estilo Amix — banda superior verde oscuro con la marca entre esquinas doradas, tarjetas blancas sobre fondo verde grisáceo, pestañas abajo */
     :root{
-      --bg:#f3f4f8; --surface:#ffffff; --fg:#151a2d; --muted:#5f667d; --line:#dfe2ec;
-      --accent:#2f43d0; --accent-ink:#ffffff; --sel-bg:#dfe4ff; --sel-fg:#1d2c9e;
-      --deb:#0f7a5c; --deb-soft:#dff3ec; --cre:#b0560c; --cre-soft:#fbeadb;
-      --danger:#b4232f;
-      --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-      --body:"Figtree", "Segoe UI", system-ui, sans-serif;
+      --bar:#13241c; --bar-fg:#ffffff; --bar-sub:#b7c4bd; --gold:#e3a04b;
+      --bg:#e9eeec; --surface:#ffffff; --fg:#15241d; --muted:#5b6b63; --line:#d5dfda;
+      --accent:#2e6249; --accent-ink:#ffffff; --sel-bg:#d3e7da; --sel-fg:#1d4a33;
+      --deb:#2e6b4a; --deb-soft:#dcede3; --cre:#a85f1c; --cre-soft:#f7e8d6;
+      --danger:#a8474f; --danger-bg:#f8e6e7; --danger-line:#e6bcc0;
+      --okc:#3a7655; --ok-bg:#e3f0e8; --ok-line:#bcd9c7;
+      --scrim:rgba(10,20,15,.45);
+      --display:"Manrope", "Segoe UI", system-ui, sans-serif;
+      --brand:"Unbounded", "Arial Black", system-ui, sans-serif;
+      --body:"Manrope", "Segoe UI", system-ui, sans-serif;
     }
     @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-      --bg:#0e1120; --surface:#181c2f; --fg:#eceef6; --muted:#9aa1b8; --line:#2a2f47;
-      --accent:#7d8dff; --accent-ink:#0e1120; --sel-bg:#27305e; --sel-fg:#c9d0ff;
-      --deb:#4fd1a5; --deb-soft:#163a31; --cre:#f2a25c; --cre-soft:#3d2a17; --danger:#ff7b85; color-scheme:dark}}
+      --bar:#0b1511; --bar-fg:#ffffff; --bar-sub:#9fb0a7; --gold:#e3a04b;
+      --bg:#0f1a15; --surface:#17241e; --fg:#e6eeea; --muted:#9bb0a5; --line:#2a3a32;
+      --accent:#5fae86; --accent-ink:#0f1a15; --sel-bg:#1f3a2c; --sel-fg:#bfe3cd;
+      --deb:#7cc9a0; --deb-soft:#1b3328; --cre:#eba868; --cre-soft:#3a2817;
+      --danger:#e3a0a6; --danger-bg:#3a2023; --danger-line:#5c3337;
+      --okc:#93d3ae; --ok-bg:#1c3328; --ok-line:#2f5040; --scrim:rgba(0,0,0,.6); color-scheme:dark}}
     :root[data-theme="dark"]{
-      --bg:#0e1120; --surface:#181c2f; --fg:#eceef6; --muted:#9aa1b8; --line:#2a2f47;
-      --accent:#7d8dff; --accent-ink:#0e1120; --sel-bg:#27305e; --sel-fg:#c9d0ff;
-      --deb:#4fd1a5; --deb-soft:#163a31; --cre:#f2a25c; --cre-soft:#3d2a17; --danger:#ff7b85; color-scheme:dark}
+      --bar:#0b1511; --bar-fg:#ffffff; --bar-sub:#9fb0a7; --gold:#e3a04b;
+      --bg:#0f1a15; --surface:#17241e; --fg:#e6eeea; --muted:#9bb0a5; --line:#2a3a32;
+      --accent:#5fae86; --accent-ink:#0f1a15; --sel-bg:#1f3a2c; --sel-fg:#bfe3cd;
+      --deb:#7cc9a0; --deb-soft:#1b3328; --cre:#eba868; --cre-soft:#3a2817;
+      --danger:#e3a0a6; --danger-bg:#3a2023; --danger-line:#5c3337;
+      --okc:#93d3ae; --ok-bg:#1c3328; --ok-line:#2f5040; --scrim:rgba(0,0,0,.6); color-scheme:dark}
     *{box-sizing:border-box}
-    body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45}
+    body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45;min-height:100vh}
     .wrap{max-width:520px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px calc(96px + env(safe-area-inset-bottom,0px))}
-    header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:18px}
-    h1{font-family:var(--display);font-weight:700;font-size:1.6rem;margin:0;letter-spacing:-.01em}
-    h2{font-family:var(--display);font-weight:600;font-size:1.15rem;margin:0}
+    .topbar{background:var(--bar);color:var(--bar-fg);text-align:center;padding-block:18px 14px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));box-shadow:0 2px 10px rgba(0,0,0,.18)}
+    .brand{position:relative;display:inline-block;font:700 2rem/1 var(--brand);letter-spacing:.01em;padding:8px 20px 6px;margin:0}
+    .brand::before,.brand::after{content:"";position:absolute;width:14px;height:14px;border:2.5px solid var(--gold)}
+    .brand::before{left:0;top:0;border-right:0;border-bottom:0}
+    .brand::after{right:0;bottom:-4px;border-left:0;border-top:0}
+    .topbar p{margin:8px 0 0;color:var(--bar-sub);font-size:.92rem;font-weight:500}
+    h2{font-family:var(--display);font-weight:800;font-size:1.2rem;margin:0}
     .today{color:var(--muted);font-size:.9rem}
     .num{font-variant-numeric:tabular-nums}
-    .panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:16px}
+    .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;display:grid;gap:16px}
     .stack{display:grid;gap:16px}
     label,.lbl{font-size:.78rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
     .field{display:grid;gap:6px}
@@ -57,7 +71,7 @@
     .money span{position:absolute;left:14px;top:50%;transform:translateY(-50%);font:700 1.6rem var(--display);color:var(--muted)}
     .money input{font:700 1.9rem var(--display);padding-left:38px;font-variant-numeric:tabular-nums}
     :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-    .btn{border:0;border-radius:12px;padding:14px 18px;font:600 1rem var(--body);cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+    .btn{border:0;border-radius:10px;padding:14px 18px;font:700 1rem var(--body);cursor:pointer;background:var(--accent);color:var(--accent-ink)}
     .btn:disabled{opacity:.45;cursor:not-allowed}
     .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
     .btn.small{padding:8px 12px;font-size:.9rem}
@@ -91,7 +105,24 @@
     .item .c{font-weight:700;min-width:0;overflow-wrap:anywhere}
     .item .t{font-size:.85rem;color:var(--muted);grid-column:1}
     .item .m{font-weight:600;grid-row:1;grid-column:2;text-align:right}
-    .item .x{grid-column:2;justify-self:end;padding:2px 4px;font-size:.8rem}
+    .item .acts{grid-column:1/-1;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;margin-top:6px}
+    .act{font:700 .78rem var(--body);padding:6px 9px;white-space:nowrap;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+    .act.del{background:var(--danger-bg);border-color:var(--danger-line);color:var(--danger)}
+    .act.pay{background:var(--ok-bg);border-color:var(--ok-line);color:var(--okc)}
+    .item .ini{font-size:.8rem;color:var(--muted);grid-column:2;text-align:right}
+    .chip.paid{background:var(--ok-bg);color:var(--okc)}
+    dialog.modal{border:0;padding:0;border-radius:16px;background:var(--surface);color:var(--fg);width:min(92vw,380px);box-shadow:0 18px 50px rgba(0,0,0,.3)}
+    dialog.modal::backdrop{background:var(--scrim)}
+    .modal form{display:grid;gap:14px;padding:22px 20px 18px}
+    .modal h3{margin:0;font:800 1.1rem var(--display);text-wrap:balance}
+    .modal .msg{margin:0;color:var(--muted)}
+    .modal .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .modal .err{margin:0;color:var(--danger);font-size:.85rem}
+    .hist{margin:0;padding:0;list-style:none;display:grid;gap:0;counter-reset:h}
+    .hist li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);counter-increment:h}
+    .hist li span:first-child::before{content:counter(h) ". ";color:var(--muted);font-weight:700}
+    .hist li span:last-child{font-weight:700;white-space:nowrap}
+    .hist-total{display:flex;justify-content:space-between;gap:12px;font-weight:800;padding:12px 14px;border-radius:10px;background:var(--ok-bg);color:var(--okc)}
     .subs{display:grid;gap:6px;font-size:.92rem}
     .subs div{display:flex;justify-content:space-between;gap:12px}
     .subs span:first-child{color:var(--muted);min-width:0;overflow-wrap:anywhere}
@@ -114,8 +145,11 @@
 </head>
 <body>
 
+<header class="topbar"><h1 class="brand">Amix</h1><p>Amix Gastos y Deudas</p><span id="today" hidden></span></header>
+
+<dialog class="modal" id="modal"><form method="dialog" id="modal-f"></form></dialog>
+
 <div class="wrap">
-  <header><h1>Amix Gastos</h1><span class="today" id="today"></span></header>
 
   <!-- REGISTRAR -->
   <section id="v-reg" class="stack">
@@ -265,6 +299,27 @@
     /* ---- utilidades UI ---- */
     function toast(t){document.querySelectorAll(".toast").forEach(x=>x.remove());const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),1800);}
     function bindSeg(id,key,cb){const seg=$(id);seg.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;state[key]=b.dataset.t;seg.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));cb&&cb();});}
+    /* ---- ventana emergente ---- */
+    function modal({title,msg,body,buttons}){
+      return new Promise(res=>{
+        const dlg=$("#modal"),f=$("#modal-f");f.replaceChildren();
+        const h=document.createElement("h3");h.textContent=title;f.appendChild(h);
+        if(msg){const p=document.createElement("p");p.className="msg";p.textContent=msg;f.appendChild(p);}
+        if(body)f.appendChild(body);
+        const row=document.createElement("div");row.className="row";
+        buttons.forEach(b=>{const el=document.createElement("button");el.type="button";el.className="btn"+(b.ghost?" ghost":"");el.textContent=b.label;
+          el.addEventListener("click",()=>{if(b.check&&!b.check())return;dlg.close();res(b.value);});row.appendChild(el);});
+        if(buttons.length===1)row.style.gridTemplateColumns="1fr";
+        f.appendChild(row);
+        dlg.onclose=()=>res(undefined);dlg.oncancel=()=>res(undefined);
+        dlg.showModal();
+      });
+    }
+    const confirmar=t=>modal({title:t,buttons:[{label:"No",value:false,ghost:true},{label:"Sí",value:true}]});
+    const abonado=x=>(x.abonos||[]).reduce((a,b)=>a+b.monto,0);
+    const saldo=x=>Math.max(0,x.monto-abonado(x));
+    function actBtn(txt,cls,fn){const b=document.createElement("button");b.type="button";b.className="act "+cls;b.textContent=txt;b.addEventListener("click",fn);return b;}
+
     function confirmBtn(btn,label,action){btn.addEventListener("click",()=>{if(btn.classList.contains("confirm")){action();return;}btn.classList.add("confirm");btn.textContent="¿Eliminar?";setTimeout(()=>{btn.classList.remove("confirm");btn.textContent=label;},3000);});}
     const parseMonto=v=>Number(String(v).replace(/\D/g,""))||0;
 
@@ -320,9 +375,12 @@
         const c=document.createElement("div");c.className="c";c.textContent=g.nota||"Sin descripción";
         const m=document.createElement("div");m.className="m num";m.textContent=fmt.format(g.monto);
         const t=document.createElement("div");t.className="t num";{const dia=fDay.format(d);t.textContent=dia.charAt(0).toUpperCase()+dia.slice(1)+" · "+fTime.format(d);}
-        const x=document.createElement("button");x.type="button";x.className="x";x.textContent="Eliminar";
-        confirmBtn(x,"Eliminar",()=>store.delGasto(g.id).then(()=>toast("Gasto eliminado")).catch(()=>toast("No se pudo eliminar")));
-        if(state.validando)it.append(c,m,t);else it.append(c,m,t,x);list.appendChild(it);
+        const acts=document.createElement("div");acts.className="acts";
+        acts.appendChild(actBtn("Eliminar","del",async()=>{
+          if(!await confirmar("¿Desea eliminar este gasto?"))return;
+          store.delGasto(g.id).then(()=>toast("Gasto eliminado")).catch(()=>toast("No se pudo eliminar"));
+        }));
+        if(state.validando)it.append(c,m,t);else it.append(c,m,t,acts);list.appendChild(it);
         total+=g.monto;const n=name(g.cardId)||g.cardNombre||"Tarjeta";byCard[n]=(byCard[n]||0)+g.monto;
       });
       const subs=$("#subs");subs.replaceChildren();
@@ -345,8 +403,9 @@
         const r=document.createElement("div");r.className="card-row"+(c.defecto?" def":"");
         const ch=document.createElement("span");ch.className="chip "+c.tipo;ch.textContent=c.tipo==="debito"?"Débito":"Crédito";
         const n=document.createElement("span");n.className="name";n.textContent=c.nombre;
-        const x=document.createElement("button");x.type="button";x.className="x";x.textContent="Quitar";
-        confirmBtn(x,"Quitar",async()=>{state.cards=state.cards.filter(k=>k.id!==c.id);render();try{await store.saveCards();toast("Tarjeta quitada");}catch(e){toast("No se pudo guardar");}});
+        const x=actBtn("Quitar","del",async()=>{
+          if(!await confirmar("¿Desea quitar la tarjeta "+c.nombre+"?"))return;
+          state.cards=state.cards.filter(k=>k.id!==c.id);render();try{await store.saveCards();toast("Tarjeta quitada");}catch(e){toast("No se pudo guardar");}});
         const st=document.createElement("button");st.type="button";st.className="star";st.setAttribute("aria-pressed",!!c.defecto);
         st.textContent=c.defecto?"★ Por defecto":"☆ Por defecto";
         st.addEventListener("click",async()=>{
@@ -371,16 +430,62 @@
       let total=0;
       rows.forEach(x=>{
         const it=document.createElement("div");it.className="item";
+        const sal=saldo(x),hay=(x.abonos||[]).length>0;
         const c=document.createElement("div");c.className="c";c.textContent=x.nota;
-        const m=document.createElement("div");m.className="m num";m.textContent=fmt.format(x.monto);
+        const m=document.createElement("div");m.className="m num";m.textContent=fmt.format(sal);
         const t=document.createElement("div");t.className="t num";t.textContent=fFecha.format(new Date(x.fecha));
-        const b=document.createElement("button");b.type="button";b.className="x";b.textContent="Eliminar";
-        confirmBtn(b,"Eliminar",()=>{state.deudas=state.deudas.filter(k=>k.id!==x.id);lsSave();renderDeu();toast("Registro eliminado");});
-        it.append(c,m,t,b);list.appendChild(it);total+=x.monto;
+        it.append(c,m,t);
+        if(hay){const ini=document.createElement("div");ini.className="ini num";ini.textContent="Inicial "+fmt.format(x.monto);it.appendChild(ini);}
+        const acts=document.createElement("div");acts.className="acts";
+        if(sal===0){const ch=document.createElement("span");ch.className="chip paid";ch.textContent="Pagada";acts.appendChild(ch);}
+        if(hay)acts.appendChild(actBtn("Ver historial de abonos","",()=>verHistorial(x)));
+        if(sal>0)acts.appendChild(actBtn("Abonar","pay",()=>abonar(x)));
+        acts.appendChild(actBtn("Eliminar","del",async()=>{
+          if(!await confirmar("¿Desea eliminar esta deuda?"))return;
+          state.deudas=state.deudas.filter(k=>k.id!==x.id);lsSave();renderDeu();toast("Deuda eliminada");
+        }));
+        it.appendChild(acts);list.appendChild(it);total+=sal;
       });
       const tot=$("#deu-total");tot.className="total "+tipo;
       tot.firstElementChild.textContent=(me?"Total que me deben":"Total que debo")+" · "+rows.length+(rows.length===1?" registro":" registros");
       $("#deu-total-v").textContent=fmt.format(total);
+    }
+    async function abonar(x){
+      const sal=saldo(x);
+      const box=document.createElement("div");box.className="field";
+      const lb=document.createElement("label");lb.htmlFor="in-abono";lb.textContent="Valor a abonar";
+      const mw=document.createElement("div");mw.className="money";
+      const sp=document.createElement("span");sp.textContent="$";
+      const inp=document.createElement("input");inp.id="in-abono";inp.inputMode="numeric";inp.placeholder="0";inp.autocomplete="off";
+      inp.addEventListener("input",()=>{const n=parseMonto(inp.value);inp.value=n?n.toLocaleString("es-CO"):"";err.hidden=true;});
+      mw.append(sp,inp);
+      const err=document.createElement("p");err.className="err";err.hidden=true;
+      box.append(lb,mw,err);
+      const check=()=>{const n=parseMonto(inp.value);
+        if(!n){err.textContent="Escribe el valor a abonar.";err.hidden=false;return false;}
+        if(n>sal){err.textContent="El abono no puede ser mayor al saldo ("+fmt.format(sal)+").";err.hidden=false;return false;}
+        return true;};
+      setTimeout(()=>inp.focus(),50);
+      const ok=await modal({title:"Abonar a: "+x.nota,msg:"Saldo actual: "+fmt.format(sal),body:box,
+        buttons:[{label:"Cancelar",value:false,ghost:true},{label:"Abonar",value:true,check}]});
+      if(!ok)return;
+      const n=parseMonto(inp.value);
+      state.deudas=state.deudas.map(k=>k.id===x.id?{...k,abonos:[...(k.abonos||[]),{monto:n,fecha:new Date().toISOString()}]}:k);
+      lsSave();renderDeu();
+      const nuevo=saldo(state.deudas.find(k=>k.id===x.id));
+      toast(nuevo===0?"Deuda pagada por completo":"Abono registrado. Saldo: "+fmt.format(nuevo));
+    }
+    function verHistorial(x){
+      const box=document.createElement("div");box.className="stack";box.style.gap="12px";
+      const ol=document.createElement("ol");ol.className="hist num";
+      const li=(a,b)=>{const l=document.createElement("li");const s1=document.createElement("span");s1.textContent=a;const s2=document.createElement("span");s2.textContent=b;l.append(s1,s2);ol.appendChild(l);};
+      li("Deuda inicial "+fFecha.format(new Date(x.fecha)),fmt.format(x.monto));
+      [...(x.abonos||[])].sort((a,b)=>a.fecha<b.fecha?-1:1).forEach(a=>li("Abono "+fFecha.format(new Date(a.fecha)),"− "+fmt.format(a.monto)));
+      const tot=document.createElement("div");tot.className="hist-total num";
+      const t1=document.createElement("span");t1.textContent=saldo(x)===0?"Saldo (pagada)":"Nuevo saldo";
+      const t2=document.createElement("span");t2.textContent=fmt.format(saldo(x));tot.append(t1,t2);
+      box.append(ol,tot);
+      modal({title:"Historial de abonos",msg:x.nota,body:box,buttons:[{label:"Cerrar",value:true}]});
     }
     function render(){renderReg();renderMes();renderCards();renderDeu();}
 
